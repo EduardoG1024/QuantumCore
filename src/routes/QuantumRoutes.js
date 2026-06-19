@@ -15,7 +15,7 @@ router.get('/testRoute', (req, res) => {
 
 router.post('/register', QuantumControllers.registerUser);
 router.post('/login', QuantumControllers.loginUser);                                             
-router.get('/dashboard', QuantumControllers.BringDocuments);                               
+router.get('/download/:doc', QuantumControllers.DownloadDocument);                               
 router.get('/docs', QuantumControllers.GenerateDocuments);                                            
 router.post('/upload', upload.single('fileRequest'), QuantumControllers.UploadFile);              
 router.post('/uploads', QuantumControllers.UploadFile);                                  

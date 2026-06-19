@@ -20,7 +20,7 @@ app.use(
     })
 );
 
-const __dirname = import.meta.dirname;
+export const __dirname = import.meta.dirname;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/quantum', QuantumRoutes);

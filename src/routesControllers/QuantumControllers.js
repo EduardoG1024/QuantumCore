@@ -1,11 +1,15 @@
 import express from "express"
 import fs from 'fs';
+import path from "path";
+import { __dirname } from "../QuantumCore.js";
 import { supabase } from "../config/supabase.js";
 import { RegisterKey, RegisterModel, RegisterValidation } from "../models/RegisterModel.js";
 
 export class QuantumControllers {
 
-    constructor() {}
+    constructor() {
+        this.url = 'http://localhost:3001';
+    }
 
     static registerUser = async (req, res) => {
         const {email, password, key} = req.body;
@@ -60,7 +64,7 @@ export class QuantumControllers {
             user: data.email,
             role: data.role,
         };
-        
+
         return res.status(200).json({
             QuantumCore: 'Login Exitoso!',
             message: `El Usuario ha Iniciado sesión`,
@@ -70,21 +74,26 @@ export class QuantumControllers {
         });
     }
 
-    static BringDocuments = async (req, res) => {
-        const files = await fetch('http://localhost:3001/dashboard/docs')
-        const resp = await files.json();
+    static DownloadDocument = async (req, res) => {
+        const {user, role} = req.session.user || {user: undefined, role: undefined};
+        if (!user || !role) return res.status(403).json({message: 'Acceso Denegado'});
+        const RequestFile = req.params.doc;
+        
+        const Files = fs.readdirSync('docs');
+        if (!Files.includes(RequestFile)) 
+            return res.status(404).json({message: 'Archivo NO Encontrado'});
 
-        return res.status(202).json({
-            message: 'Archivos Almacenados',
-            files: resp.files
-        });
+        const File = path.join(__dirname, '..', 'docs', RequestFile);
+        res.download(File);
     }
 
     static GenerateDocuments = (req, res) => {
-        const user = req.session.user;
-        if (!user || typeof(user) !== 'string') {
+        const {user, role} = req.session.user || {user: 'none', role: 'none'};
+        if (!user || !role || role !== 'admin') {
             return res.status(401).json({
                 message: 'UNAUTHORIZED USER',
+                email: user,
+                role: role,
                 validation: false,
             })
         }
