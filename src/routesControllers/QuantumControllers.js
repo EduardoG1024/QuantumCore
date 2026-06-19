@@ -1,16 +1,53 @@
 import express from "express"
 import fs from 'fs';
-import { QuantumErrors } from "../errors/QuantumErrors.js";
+import { supabase } from "../config/supabase.js";
+import { RegisterKey, RegisterModel, RegisterValidation } from "../models/RegisterModel.js";
 
 export class QuantumControllers {
 
     constructor() {}
 
+    static registerUser = async (req, res) => {
+        const {email, password, key} = req.body;
+        if (!email || !password || !key) return res.status(400).json({message: 'Credenciales NO Encontradas'});
+        const KeyValidation = new RegisterKey(key);
+        if (KeyValidation.status === false) return res.status(401).json({message: 'Clave de Registro Incorrecta'});
+
+        const UserValidation = new RegisterValidation(email, password);
+        if (UserValidation.status === false) 
+            return res.status(400).json({
+            message: 'Crendenciales NO Seguras',
+            key: 'Clave Correcta',
+            email: 'Asegurate que sea un Correo Valido',
+            password: 'Password debe ser Mayor a 8 Digitos'
+        });
+
+        const UserResult = new RegisterModel(email, password);
+
+        const {error} = await supabase
+        .from('users')
+        .insert({
+            email: UserResult.email,
+            password: UserResult.password,
+            role: UserResult.role,
+            key: UserResult.key,
+            created_at: UserResult.created_at,
+        });
+        if (error) return res.status(400).json({message: 'Ocurrió un Error al Registar las Credenciales', error: error});
+
+        return res.status(202).json({
+            message: 'Datos Correctos',
+            email: email,
+            password_length: password.length,
+            validation: true,
+        });
+    }
+
     static loginUser = async (req, res) => {
         const {email, password} = req.body;
         
         return res.status(200).json({
-            RITA: 'Login Exitoso!',
+            QuantumCore: 'Login Exitoso!',
             message: `El Usuario ha Iniciado sesión`,
             validation: true,
         });

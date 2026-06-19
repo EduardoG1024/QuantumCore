@@ -23,8 +23,14 @@ app.use(
 const __dirname = import.meta.dirname;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/rita', QuantumRoutes);
+app.use('/quantum', QuantumRoutes);
 app.use(express.static(path.join(__dirname, '../public')));
+app.use((err, req, res, next) => {
+    console.log(err);
+    return res.status(500).json({
+        message: 'Ocurrió un Error',
+    })
+});
 
 app.listen(envs.PORT, () => {
     console.log(`Servidor Escuchando en el Puerto: ${envs.PORT}`);

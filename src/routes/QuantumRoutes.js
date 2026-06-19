@@ -13,7 +13,7 @@ router.get('/testRoute', (req, res) => {
     });
 })
 
-
+router.post('/register', QuantumControllers.registerUser);
 router.post('/login', QuantumControllers.loginUser);                                             
 router.get('/dashboard', QuantumControllers.BringDocuments);                               
 router.get('/docs', QuantumControllers.GenerateDocuments);                                            
