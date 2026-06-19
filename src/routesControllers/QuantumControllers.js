@@ -45,11 +45,28 @@ export class QuantumControllers {
 
     static loginUser = async (req, res) => {
         const {email, password} = req.body;
+        if (!email || !password) return res.status(400).json({message: 'Credenciales NO Encontradas'});
+
+        const {data, error} = await supabase
+        .from('users')
+        .select('email, password, role')
+        .eq('email', email)
+        .eq('password', password)
+        .single()
+        if (error) return res.status(401).json({message: 'Credenciales NO Validas'});
+
+        if(!data.email || !data.password) return res.status(401).json({message: 'Credenciales Incorrectas'});
+        req.session.user = {
+            user: data.email,
+            role: data.role,
+        };
         
         return res.status(200).json({
             QuantumCore: 'Login Exitoso!',
             message: `El Usuario ha Iniciado sesión`,
+            email: data.email,
             validation: true,
+            role: req.session.user.role,
         });
     }
 

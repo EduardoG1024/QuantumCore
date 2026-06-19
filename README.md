@@ -5,3 +5,8 @@
 - Run the Project:
 - Copy the repository and then: ``` npm install ```
 - Use Postman to try the routes
+
+## SECURITY
+- This API uses the Database as Auth method, but it will be replaced with the Auth method of Supabase in Production.
+- Helmet to hide Info.
+- Middlewares de Validate the Data that the Server Recives.
