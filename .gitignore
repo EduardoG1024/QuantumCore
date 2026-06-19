@@ -1,0 +1,14 @@
+# ENV
+.env
+
+# FOLDER
+uploads/
+docs/
+public/
+assets/
+
+# NODE_MODULES
+node_modules/
+
+# PACKAGE-LOCK
+package-lock.json
