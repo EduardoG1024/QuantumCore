@@ -4,7 +4,7 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const user = 'Pap';
+        const user = 'Quantum';
         const dirPath = `uploads/${user}`;
 
         if (!fs.existsSync(dirPath)) {
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uuid = Uuid()
-        cb(null, 'Peali-' + uuid + '.png');
+        cb(null, 'Quantum-' + uuid + file.mimetype);
     }
 })
 export const upload = multer({storage: storage});
