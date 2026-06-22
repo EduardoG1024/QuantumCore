@@ -3,7 +3,8 @@ import fs from 'fs';
 import path from "path";
 import { __dirname } from "../QuantumCore.js";
 import { supabase } from "../config/supabase.js";
-import { RegisterKey, RegisterModel, RegisterValidation } from "../models/RegisterModel.js";
+import { RegisterModel, RegisterValidation } from "../models/RegisterModel.js";
+import { RegisterKey } from "../middlewares/key-validator.js";
 
 export class QuantumControllers {
 
@@ -11,9 +12,10 @@ export class QuantumControllers {
         this.url = 'http://localhost:3001';
     }
 
-    static registerUser = async (req, res) => {
+    static RegisterUser = async (req, res) => {
         const {email, password, key} = req.body;
         if (!email || !password || !key) return res.status(400).json({message: 'Credenciales NO Encontradas'});
+
         const KeyValidation = new RegisterKey(key);
         if (KeyValidation.status === false) return res.status(401).json({message: 'Clave de Registro Incorrecta'});
 
@@ -47,7 +49,7 @@ export class QuantumControllers {
         });
     }
 
-    static loginUser = async (req, res) => {
+    static LoginUser = async (req, res) => {
         const {email, password} = req.body;
         if (!email || !password) return res.status(400).json({message: 'Credenciales NO Encontradas'});
 
@@ -107,15 +109,14 @@ export class QuantumControllers {
 
     static UploadFile = (req, res) => {
         const upload = req.file;
-        console.log(upload);
 
         return res.status(202).json({
             message: 'Archivo Guardado!',
-            //path: req.file.path,
+            upload: upload,
         });
     }
 
-    static getUploads = (req, res) => {
+    static GetUploads = (req, res) => {
         return res.status(202).json({
             message: 'Archivo Guardado!',
             //path: req.file.path,
@@ -129,5 +130,18 @@ export class QuantumControllers {
 
         fs.rmSync(`uploads/${deleteDir}`, {recursive: true});
         return res.status(202).json({message: `se elimino la Carpeta: ${deleteDir}`});
+    }
+
+    static ErrorDirect = (req, res) => {
+        const userExist = req.session.user || {user: false, role: false};
+        let user = true;
+        if (userExist?.user === false) user = false;
+
+        return res.status(500).json({
+            QuantumCore: 'ERROR',
+            message: 'Ocurrió un Error en el Servidor Regresa al Inicio...',
+            usuario: user,
+            report: 'El Error Fue Reportado.',
+        })
     }
 }

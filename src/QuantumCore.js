@@ -16,7 +16,7 @@ app.use(
         secret: envs.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: {secure: false}, // CAMBIAR EN PRODUCCION
+        cookie: {secure: false}, // CAMBIAR EN PRODUCCION HTTPS
     })
 );
 
@@ -27,6 +27,7 @@ app.use('/quantum', QuantumRoutes);
 app.use(express.static(path.join(__dirname, '../public')));
 app.use((err, req, res, next) => {
     console.log(err);
+    
     return res.status(500).json({
         message: 'Ocurrió un Error',
     })
