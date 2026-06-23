@@ -6,9 +6,16 @@ import { QuantumControllersGroup } from "../routesControllers/QuantumControllers
 
 const router = Router();
 
-// GRUPO CARPETAS
-router.post('/assign', QuantumControllersGroup.Assign);
-router.post('/firstgroup', QuantumControllersGroup.PostToFirstGroup)   
+// GRUPO UNO
+router.post('/firstgroup', QuantumControllersGroup.PostToFirstGroup);
+router.get('/getfirstgroup', QuantumControllersGroup.GetFirstGroupFiles);
+router.post('/secondgroup', QuantumControllersGroup.PostToSecondGroup);
+
+// GRUPO DOS
+
+// REGRESO A GRUPO DOS
+
+// ENTREGA DEL GRUPO DOS
 
 
 export default router;

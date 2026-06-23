@@ -1,18 +1,29 @@
 import express from "express";
+import path from "path";
 
 export class QuantumControllersGroup {
 
     constructor() {}
 
-    static Assign = (req, res) => {
+    static PostToFirstGroup = (req, res) => {
+        const name = req.body.name;
+
         return res.status(200).json({
-            message: 'Assign Name To File',
+            message: 'Post To First Group',
+            file: `${name}`,
+            path: `groupOne/${name}`,
         });
     }
 
-    static PostToFirstGroup = (req, res) => {
+    static GetFirstGroupFiles = (req, res) => {
         return res.status(200).json({
-            message: 'Post To First Group',
+            message: 'Get First Group Files',
+        });
+    }
+
+    static PostToSecondGroup = (req, res) => {
+        return res.status(200).json({
+            message: 'Post To Second Group',
         });
     }
 }
