@@ -11,12 +11,17 @@ import QuantumRoutes from './routes/QuantumRoutes.js';
 const app = express();
 app.use(helmet());
 
+app.set('trust proxy', 1);
 app.use(
     session({
         secret: envs.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: {secure: false}, // CAMBIAR EN PRODUCCION HTTPS
+        cookie: {
+            secure: false,
+            httpOnly: true,
+            sameSite: 'lax',
+        },
     })
 );
 
