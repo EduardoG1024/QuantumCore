@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import { envs } from './config/envs.js';
 import { Uuid } from './config/uuid.adapter.js';
 import QuantumRoutes from './routes/QuantumRoutes.js';
+import QuantumRoutesGroup from './routes/QuantumRoutesGroup.js';
 
 const app = express();
 app.use(helmet());
@@ -29,13 +30,14 @@ export const __dirname = import.meta.dirname;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/quantum', QuantumRoutes);
+app.use('/quantum', QuantumRoutesGroup);
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use((err, req, res, next) => {
     console.log(err);
     
     return res.status(500).json({
-        QuantumCore: 'ERROR',
+        QuantumCore: `ERROR: ${err}`,
         message: 'Ocurrió un Error en el Servidor Regresa al Inicio...',
         report: 'El Error Fue Reportado',
         date: new Date(),

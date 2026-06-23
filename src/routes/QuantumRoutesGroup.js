@@ -1,13 +1,12 @@
 import { Router } from "express";
-import { limiter } from "../middlewares/rate-limit";
-import { upload } from "../middlewares/file-upload";
-import router from "./QuantumRoutes";
-import { QuantumControllersGroup } from "../routesControllers/QuantumControllersGroup";
+import { QuantumControllersGroup } from "../routesControllers/QuantumControllersGroup.js";
+import { limiterUser, limiterIP } from "../middlewares/rate-limit.js";
+import { GroupUpload } from "../middlewares/file-upload-group.js";
 
 const router = Router();
 
 // GRUPO UNO
-router.post('/firstgroup', QuantumControllersGroup.PostToFirstGroup);
+router.post('/firstgroup', GroupUpload.single('groupOne'), QuantumControllersGroup.PostToFirstGroup);
 router.get('/getfirstgroup', QuantumControllersGroup.GetFirstGroupFiles);
 router.post('/secondgroup', QuantumControllersGroup.PostToSecondGroup);
 
