@@ -21,8 +21,8 @@ export class QuantumControllers {
     }
 
     static RegisterKey = (req, res) => {
-        // const {user, role, key} = req.session.user || this.nouser;
-        // if (!user || !role || !key) return res.status(403).json({message: 'ACCESO DENEGADO'});
+        const {user, role, key} = req.session.user || this.nouser;
+        if (!user || !role || !key) return res.status(403).json({message: 'ACCESO DENEGADO'});
         const register = new CreateRegisterKey();
         console.log(register)
         return res.status(200).json({
