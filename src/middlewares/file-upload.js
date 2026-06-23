@@ -2,6 +2,8 @@ import fs from 'fs';
 import { Uuid } from '../config/uuid.adapter.js';
 import multer from "multer";
 
+const allowedTypes = ['png', 'jpg', 'jpeg', 'zip', 'txt'];
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const user = 'Quantum';
@@ -15,7 +17,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uuid = Uuid()
-        cb(null, 'Quantum-' + uuid + file.mimetype);
+        const ext = file.mimetype.replace('image/', '');
+        cb(null, 'Quantum-' + uuid + '.' + ext);
     }
 })
 export const upload = multer({storage: storage});

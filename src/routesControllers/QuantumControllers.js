@@ -5,11 +5,31 @@ import { __dirname } from "../QuantumCore.js";
 import { supabase } from "../config/supabase.js";
 import { RegisterModel, RegisterValidation } from "../models/RegisterModel.js";
 import { RegisterKey } from "../middlewares/key-validator.js";
+import { CreateRegisterKey } from "../models/CreateKeyModel.js";
+import { group } from "console";
 
 export class QuantumControllers {
 
+    static nouser = {
+        user: true, 
+        role: true, 
+        key: true,
+    }
+
     constructor() {
         this.url = 'http://localhost:3001';
+    }
+
+    static RegisterKey = (req, res) => {
+        // const {user, role, key} = req.session.user || this.nouser;
+        // if (!user || !role || !key) return res.status(403).json({message: 'ACCESO DENEGADO'});
+        const register = new CreateRegisterKey();
+        console.log(register)
+        return res.status(200).json({
+            message: 'LLave de Registro',
+            key: register,
+            expiresIn: `10 min.`,
+        })
     }
 
     static RegisterUser = async (req, res) => {
@@ -17,7 +37,8 @@ export class QuantumControllers {
         if (!email || !password || !key) return res.status(400).json({message: 'Credenciales NO Encontradas'});
 
         const KeyValidation = new RegisterKey(key);
-        if (KeyValidation.status === false) return res.status(401).json({message: 'Clave de Registro Incorrecta'});
+        if (KeyValidation.Status === false || KeyValidation.Date === false) 
+            return res.status(401).json({message: 'Clave de Registro Incorrecta'});
 
         const UserValidation = new RegisterValidation(email, password);
         if (UserValidation.status === false) 
@@ -37,6 +58,7 @@ export class QuantumControllers {
             password: UserResult.password,
             role: UserResult.role,
             key: UserResult.key,
+            group: UserResult.group,
             created_at: UserResult.created_at,
         });
         if (error) return res.status(400).json({message: 'Ocurrió un Error al Registar las Credenciales', error: error});
@@ -65,6 +87,7 @@ export class QuantumControllers {
         req.session.user = {
             user: data.email,
             role: data.role,
+            key: data.key,
         };
 
         return res.status(200).json({
@@ -77,7 +100,7 @@ export class QuantumControllers {
     }
 
     static DownloadDocument = async (req, res) => {
-        const {user, role} = req.session.user || {user: undefined, role: undefined};
+        const {user, role, key} = req.session.user || this.nouser;
         if (!user || !role) return res.status(403).json({message: 'Acceso Denegado'});
         const RequestFile = req.params.doc;
         
@@ -90,10 +113,10 @@ export class QuantumControllers {
     }
 
     static GenerateDocuments = (req, res) => {
-        const {user, role} = req.session.user || {user: 'none', role: 'none'};
+        const {user, role} = req.session.user || this.nouser;
         if (!user || !role || role !== 'admin') {
             return res.status(401).json({
-                message: 'UNAUTHORIZED USER',
+                message: 'NO AUTORIZADO',
                 email: user,
                 role: role,
                 validation: false,
@@ -109,7 +132,7 @@ export class QuantumControllers {
 
     static UploadFile = (req, res) => {
         const upload = req.file;
-
+        console.log(upload);
         return res.status(202).json({
             message: 'Archivo Guardado!',
             upload: upload,
@@ -117,15 +140,21 @@ export class QuantumControllers {
     }
 
     static GetUploads = (req, res) => {
+        const folder = req.params.folder;
+        const files = fs.readdirSync(`uploads/${folder}`);
+
         return res.status(202).json({
-            message: 'Archivo Guardado!',
-            //path: req.file.path,
+            message: `Carpeta de ${folder}`,
+            files: files,
         });
     }
 
     static DeleteFolder = (req, res) => {
         const files = fs.readdirSync('uploads');
-        const deleteDir = req.params.DirName;
+        const deleteDir = req.params.dirname;
+        const {user, role, key} = req.session.user || this.nouser;
+        if (!user || !role || !key) return res.status(401).json({mesagge: 'NO AUTORIZADO'});
+
         if (!files.includes(deleteDir)) return res.status(404).json({message: 'Carpeta no Encontrada'});
 
         fs.rmSync(`uploads/${deleteDir}`, {recursive: true});

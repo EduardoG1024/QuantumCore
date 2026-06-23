@@ -10,8 +10,9 @@ router.post('/login', QuantumControllers.LoginUser);
 router.get('/download/:doc', QuantumControllers.DownloadDocument);                               
 router.get('/docs', QuantumControllers.GenerateDocuments);                                            
 router.post('/upload', upload.single('fileRequest'), QuantumControllers.UploadFile);              
-router.get('/uploads', QuantumControllers.GetUploads);                                  
-router.delete('/delete/:DirName', QuantumControllers.DeleteFolder);
+router.get('/uploads/:folder', QuantumControllers.GetUploads);                                  
+router.delete('/delete/:dirname', QuantumControllers.DeleteFolder);
 router.get('/error', QuantumControllers.ErrorDirect);
+router.get('/registerkey', QuantumControllers.RegisterKey);
 
 export default router;

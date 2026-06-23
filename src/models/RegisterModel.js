@@ -7,6 +7,7 @@ export class RegisterModel {
         this.password = password;
         this.role = 'user';
         this.key = 'none';
+        this.group = 'none';
         this.created_at = this.creationDate();
     }
 
