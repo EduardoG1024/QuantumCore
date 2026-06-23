@@ -8,6 +8,10 @@ docs/
 public/
 assets/
 
+# GROUPS
+groupOne/
+groupTwo/
+
 # NODE_MODULES
 node_modules/
 
