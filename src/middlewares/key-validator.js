@@ -1,3 +1,4 @@
+import { envs } from "../config/envs.js";
 
 export class RegisterKey {
 

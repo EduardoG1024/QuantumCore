@@ -1,12 +1,14 @@
 import fs from 'fs';
 import { Uuid } from '../config/uuid.adapter.js';
 import multer from "multer";
+import { error } from 'console';
+import path from 'path';
 
-const allowedTypes = ['png', 'jpg', 'jpeg', 'zip', 'txt'];
+const allowedTypes = ['png', 'jpg', 'jpeg', 'zip', 'txt', 'pdf', 'docx'];
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const user = 'Quantum';
+        const user = req.session?.user?.user || 'none';
         const dirPath = `uploads/${user}`;
 
         if (!fs.existsSync(dirPath)) {
@@ -17,8 +19,17 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uuid = Uuid()
-        const ext = file.mimetype.replace('image/', '');
-        cb(null, 'Quantum-' + uuid + '.' + ext);
+        const ext = path.extname(file.originalname);
+        cb(null, 'Quantum-' + uuid + ext);
     }
 })
-export const upload = multer({storage: storage});
+export const upload = multer({storage: storage,
+    fileFilter: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1];
+        console.log(ext);
+        if (!allowedTypes.includes(ext)) {
+            cb(error, null);
+        }
+        cb(null, true);
+    }
+});

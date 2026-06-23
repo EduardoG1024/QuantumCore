@@ -30,11 +30,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/quantum', QuantumRoutes);
 app.use(express.static(path.join(__dirname, '../public')));
+
 app.use((err, req, res, next) => {
     console.log(err);
     
     return res.status(500).json({
-        message: 'Ocurrió un Error',
+        QuantumCore: 'ERROR',
+        message: 'Ocurrió un Error en el Servidor Regresa al Inicio...',
+        report: 'El Error Fue Reportado',
+        date: new Date(),
     })
 });
 

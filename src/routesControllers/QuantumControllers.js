@@ -16,9 +16,7 @@ export class QuantumControllers {
         key: true,
     }
 
-    constructor() {
-        this.url = 'http://localhost:3001';
-    }
+    constructor() {}
 
     static RegisterKey = (req, res) => {
         const {user, role, key} = req.session.user || this.nouser;
@@ -83,7 +81,7 @@ export class QuantumControllers {
         .single()
         if (error) return res.status(401).json({message: 'Credenciales NO Validas'});
 
-        if(!data.email || !data.password) return res.status(401).json({message: 'Credenciales Incorrectas'});
+        if(!data.email || !data.password || !data.role) return res.status(401).json({message: 'Credenciales NO Encontradas'});
         req.session.user = {
             user: data.email,
             role: data.role,
@@ -103,13 +101,18 @@ export class QuantumControllers {
         const {user, role, key} = req.session.user || this.nouser;
         if (!user || !role) return res.status(403).json({message: 'Acceso Denegado'});
         const RequestFile = req.params.doc;
+        if (RequestFile.includes('Quantum')) {
+            const filePath = path.join(__dirname, `../uploads/Quantum/${RequestFile}`);
+            return res.download(filePath);
+            
+        }
         
         const Files = fs.readdirSync('docs');
         if (!Files.includes(RequestFile)) 
             return res.status(404).json({message: 'Archivo NO Encontrado'});
 
         const File = path.join(__dirname, '..', 'docs', RequestFile);
-        res.download(File);
+        return res.download(File);
     }
 
     static GenerateDocuments = (req, res) => {
@@ -155,7 +158,7 @@ export class QuantumControllers {
         const {user, role, key} = req.session.user || this.nouser;
         if (!user || !role || !key) return res.status(401).json({mesagge: 'NO AUTORIZADO'});
 
-        if (!files.includes(deleteDir)) return res.status(404).json({message: 'Carpeta no Encontrada'});
+        if (!files.includes(deleteDir)) return res.status(404).json({message: 'Carpeta no Encontrada', folder: deleteDir});
 
         fs.rmSync(`uploads/${deleteDir}`, {recursive: true});
         return res.status(202).json({message: `se elimino la Carpeta: ${deleteDir}`});
