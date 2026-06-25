@@ -16,9 +16,9 @@ export const limiterUser = rateLimit({
 
 export const limiterIP = rateLimit({
     windowMs: 10 * 60 * 1000,
-    limit: 15,
+    limit: 50,
     statusCode: 429,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
-    message: 'Usuario NO Registrado, Intente mas Tarde',
+    message: 'Haz Alcanzado el Limite de Peticiones, Intenta mas Tarde',
 })
