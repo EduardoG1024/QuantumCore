@@ -8,7 +8,9 @@ const allowedTypes = ['png', 'jpg', 'jpeg', 'zip', 'txt', 'pdf', 'docx'];
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const user = req.session?.user?.user || 'none';
+        const user = req.session?.user?.user || false;
+        if (!user) return cb(new Error('NO AUTORIZADO'), null);
+
         const dirPath = `uploads/${user}`;
 
         if (!fs.existsSync(dirPath)) {
@@ -26,7 +28,7 @@ const storage = multer.diskStorage({
 export const upload = multer({storage: storage,
     fileFilter: (req, file, cb) => {
         const ext = file.mimetype.split('/')[1];
-        console.log(ext);
+        
         if (!allowedTypes.includes(ext)) {
             cb(error, null);
         }

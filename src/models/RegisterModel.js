@@ -2,8 +2,8 @@ import { envs } from "../config/envs.js";
 
 export class RegisterModel {
 
-    constructor (email, password) {
-        this.email = email;
+    constructor (username, password) {
+        this.username = username;
         this.password = password;
         this.role = 'user';
         this.key = 'none';
@@ -17,21 +17,22 @@ export class RegisterModel {
     }
 }
 
+const symbols = ['!', '¡', '#', '$', '%', '&', '/', '(', ')', '=', '?', '¿', '*', '|', '{', '}', '[', ']', '.', ',', ';', ':', '_', '-', '@'];
+const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
 export class RegisterValidation {
 
-    constructor(email, password) {
-        this.email = email;
+    constructor(username, password) {
+        this.username = username;
         this.password = password;
         this.status = this.ValidationData();
     }
 
     ValidationData() {
-        if (!this.email.includes('@')){
-            return false;
-        }
-        if (this.password.length < 8) {
-            return false;
-        }
+        if (this.username.includes(symbols)) return false;
+        if (this.username.includes(numbers)) return false;
+        if (this.password.length < 8) return false;
+
         return true;
     }
 }
